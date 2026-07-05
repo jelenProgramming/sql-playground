@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Database } from 'sql.js'
 import { EXERCISES, checkExercise, type CheckResult } from '../exercises/exercises'
 import { runQuery, type QueryResult } from '../db/database'
+import type { Lang, UIStrings } from '../i18n'
 import QueryEditor from './QueryEditor'
 import ResultsTable from './ResultsTable'
 
@@ -9,11 +10,11 @@ interface Props {
   makeDb: () => Database
   passed: Set<string>
   onPass: (id: string) => void
+  lang: Lang
+  t: UIStrings
 }
 
-const DIFF_LABELS: Record<1 | 2 | 3, string> = { 1: 'easy', 2: 'medium', 3: 'hard' }
-
-export default function ExercisePanel({ makeDb, passed, onPass }: Props) {
+export default function ExercisePanel({ makeDb, passed, onPass, lang, t }: Props) {
   const [openId, setOpenId] = useState<string | null>(EXERCISES[0]?.id ?? null)
   const [drafts, setDrafts] = useState<Record<string, string>>({})
   const [previews, setPreviews] = useState<Record<string, QueryResult>>({})
@@ -59,10 +60,7 @@ export default function ExercisePanel({ makeDb, passed, onPass }: Props) {
 
   return (
     <section className="exercises">
-      <p className="exProgress">
-        {passed.size} of {EXERCISES.length} solved. Answers are checked against the real result
-        set, so any correct query passes, not just the reference one.
-      </p>
+      <p className="exProgress">{t.exProgress(passed.size, EXERCISES.length)}</p>
       <ul className="exList">
         {EXERCISES.map(exercise => {
           const isOpen = openId === exercise.id
@@ -76,49 +74,53 @@ export default function ExercisePanel({ makeDb, passed, onPass }: Props) {
                 onClick={() => setOpenId(isOpen ? null : exercise.id)}
                 aria-expanded={isOpen}
               >
-                <span className="exDots" aria-label={DIFF_LABELS[exercise.difficulty]}>
+                <span className="exDots" aria-label={t.diffLabels[exercise.difficulty]}>
                   {'●'.repeat(exercise.difficulty)}
                   {'○'.repeat(3 - exercise.difficulty)}
                 </span>
-                <span className="exTitle">{exercise.title}</span>
+                <span className="exTitle">{exercise.title[lang]}</span>
                 {passed.has(exercise.id) && (
-                  <span className="exDone" aria-label="solved">
-                    ✓ solved
+                  <span className="exDone" aria-label={t.solved}>
+                    {t.solved}
                   </span>
                 )}
               </button>
               {isOpen && (
                 <div className="exBody">
-                  <p className="exPrompt">{exercise.prompt}</p>
+                  <p className="exPrompt">{exercise.prompt[lang]}</p>
                   <details className="exHint">
-                    <summary>Hint</summary>
-                    <p>{exercise.hint}</p>
+                    <summary>{t.hint}</summary>
+                    <p>{exercise.hint[lang]}</p>
                   </details>
                   <QueryEditor
                     value={drafts[exercise.id] ?? ''}
                     onChange={sql => setDraft(exercise.id, sql)}
                     onRun={() => runPreview(exercise.id)}
-                    label="Your query"
+                    label={t.yourQuery}
+                    hintRuns={t.editorHintRuns}
                     rows={5}
                   />
                   <div className="actionRow">
                     <button type="button" className="btnPrimary" onClick={() => runPreview(exercise.id)}>
-                      Run
+                      {t.run}
                     </button>
                     <button type="button" className="btnGhost" onClick={() => runCheck(exercise.id)}>
-                      Check answer
+                      {t.checkAnswer}
                     </button>
                     <button
                       type="button"
                       className="btnPlain"
                       onClick={() => toggleSolution(exercise.id)}
                     >
-                      {shownSolutions.has(exercise.id) ? 'Hide solution' : 'Show solution'}
+                      {shownSolutions.has(exercise.id) ? t.hideSolution : t.showSolution}
                     </button>
                   </div>
                   {check && (
-                    <p className={check.pass ? 'checkMsg checkPass passFlash' : 'checkMsg checkFail'} role="status">
-                      {check.message}
+                    <p
+                      className={check.pass ? 'checkMsg checkPass passFlash' : 'checkMsg checkFail'}
+                      role="status"
+                    >
+                      {check.pass ? t.correct : check.message}
                     </p>
                   )}
                   {shownSolutions.has(exercise.id) && (
@@ -126,7 +128,7 @@ export default function ExercisePanel({ makeDb, passed, onPass }: Props) {
                   )}
                   {preview !== undefined && (
                     <div className="fadeUp">
-                      <ResultsTable result={preview} />
+                      <ResultsTable result={preview} t={t} />
                     </div>
                   )}
                 </div>

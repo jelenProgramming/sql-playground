@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import type { TableInfo } from '../db/database'
+import type { UIStrings } from '../i18n'
 
 interface Props {
   schema: TableInfo[]
   dbName: string
   onPickTable: (name: string) => void
+  t: UIStrings
 }
 
-export default function SchemaSidebar({ schema, dbName, onPickTable }: Props) {
+export default function SchemaSidebar({ schema, dbName, onPickTable, t }: Props) {
   const [open, setOpen] = useState<Set<string>>(
     () => new Set(schema.length > 0 ? [schema[0].name] : []),
   )
@@ -48,7 +50,7 @@ export default function SchemaSidebar({ schema, dbName, onPickTable }: Props) {
                 onClick={() => onPickTable(table.name)}
                 title={`SELECT * FROM ${table.name} LIMIT 10;`}
               >
-                {table.rowCount} rows
+                {t.rowsBadge(table.rowCount)}
               </button>
             </div>
             {open.has(table.name) && (
@@ -66,9 +68,7 @@ export default function SchemaSidebar({ schema, dbName, onPickTable }: Props) {
           </li>
         ))}
       </ul>
-      <p className="sidebarNote">
-        Click a row count to query that table. Data lives in memory and is reseeded on reload.
-      </p>
+      <p className="sidebarNote">{t.sidebarNote}</p>
     </aside>
   )
 }

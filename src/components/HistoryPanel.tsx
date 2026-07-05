@@ -3,14 +3,17 @@ import { truncate } from '../lib/format'
 interface Props {
   history: string[]
   onPick: (sql: string) => void
+  title: string
 }
 
-export default function HistoryPanel({ history, onPick }: Props) {
+export default function HistoryPanel({ history, onPick, title }: Props) {
   if (history.length === 0) return null
 
   return (
     <details className="historyBlock">
-      <summary>Recent queries ({history.length})</summary>
+      <summary>
+        {title} ({history.length})
+      </summary>
       <ul className="historyList">
         {history.map((sql, i) => (
           <li key={`${i}-${sql.slice(0, 20)}`}>

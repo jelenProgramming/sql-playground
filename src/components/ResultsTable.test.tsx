@@ -1,16 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import ResultsTable from './ResultsTable'
+import { UI } from '../i18n'
 
 describe('ResultsTable', () => {
   it('shows a placeholder before any query has run', () => {
-    render(<ResultsTable result={null} />)
+    render(<ResultsTable result={null} t={UI.en} />)
     expect(screen.getByText(/run a query/i)).toBeInTheDocument()
   })
 
   it('renders columns, rows and the meta bar for a select result', () => {
     render(
-      <ResultsTable
+      <ResultsTable t={UI.en}
         result={{
           kind: 'select',
           columns: ['name', 'price'],
@@ -30,7 +31,7 @@ describe('ResultsTable', () => {
 
   it('renders NULL cells distinctly', () => {
     render(
-      <ResultsTable
+      <ResultsTable t={UI.en}
         result={{ kind: 'select', columns: ['x'], values: [[null]], ms: 1 }}
       />,
     )
@@ -39,12 +40,12 @@ describe('ResultsTable', () => {
   })
 
   it('renders SQL errors', () => {
-    render(<ResultsTable result={{ kind: 'error', message: 'near "SELEC": syntax error' }} />)
+    render(<ResultsTable t={UI.en} result={{ kind: 'error', message: 'near "SELEC": syntax error' }} />)
     expect(screen.getByRole('alert')).toHaveTextContent(/syntax error/)
   })
 
   it('renders write results with the modified row count', () => {
-    render(<ResultsTable result={{ kind: 'write', rowsModified: 3, ms: 1 }} />)
+    render(<ResultsTable t={UI.en} result={{ kind: 'write', rowsModified: 3, ms: 1 }} />)
     expect(screen.getByRole('status')).toHaveTextContent(/3 row/)
   })
 })

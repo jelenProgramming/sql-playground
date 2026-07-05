@@ -11,6 +11,7 @@ import {
 import { DB_NAME } from './db/seed'
 import { loadJSON, saveJSON } from './lib/storage'
 import { EXERCISES } from './exercises/exercises'
+import { UI, loadStoredLang, storeLang, type Lang } from './i18n'
 import SchemaSidebar from './components/SchemaSidebar'
 import QueryEditor from './components/QueryEditor'
 import ResultsTable from './components/ResultsTable'
@@ -19,6 +20,7 @@ import ExercisePanel from './components/ExercisePanel'
 
 const HISTORY_KEY = 'sqlpg:history'
 const PASSED_KEY = 'sqlpg:passed'
+const LANG_KEY = 'sqlpg:lang'
 
 const DEFAULT_SQL = `SELECT p.name, p.price, c.name AS category
 FROM products p
@@ -29,6 +31,7 @@ type Status = 'loading' | 'ready' | 'failed'
 type Tab = 'playground' | 'exercises'
 
 export default function App() {
+  const [lang, setLang] = useState<Lang>(() => loadStoredLang(LANG_KEY))
   const [status, setStatus] = useState<Status>('loading')
   const [tab, setTab] = useState<Tab>('playground')
   const [schema, setSchema] = useState<TableInfo[]>([])
@@ -43,6 +46,12 @@ export default function App() {
   const sqlModuleRef = useRef<SqlJsStatic | null>(null)
   const dbRef = useRef<Database | null>(null)
   const editorRef = useRef<HTMLTextAreaElement>(null)
+
+  const t = UI[lang]
+
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
 
   useEffect(() => {
     let cancelled = false
@@ -70,6 +79,11 @@ export default function App() {
       return createDatabase(SQL)
     }
   }, [])
+
+  const switchLang = (next: Lang) => {
+    setLang(next)
+    storeLang(LANG_KEY, next)
+  }
 
   const pushHistory = (query: string) => {
     setHistory(prev => {
@@ -117,11 +131,30 @@ export default function App() {
     })
   }
 
+  const langToggle = (
+    <div className="langToggle" role="group" aria-label="Language">
+      <button
+        type="button"
+        className={lang === 'en' ? 'langToggle__btn langToggle__btn--on' : 'langToggle__btn'}
+        onClick={() => switchLang('en')}
+      >
+        EN
+      </button>
+      <button
+        type="button"
+        className={lang === 'de' ? 'langToggle__btn langToggle__btn--on' : 'langToggle__btn'}
+        onClick={() => switchLang('de')}
+      >
+        DE
+      </button>
+    </div>
+  )
+
   if (status === 'loading') {
     return (
       <div className="bootScreen">
         <p className="bootTitle">SQL Playground</p>
-        <p className="bootSub">Loading SQLite (WebAssembly)…</p>
+        <p className="bootSub">{t.bootLoading}</p>
       </div>
     )
   }
@@ -130,9 +163,7 @@ export default function App() {
     return (
       <div className="bootScreen">
         <p className="bootTitle">SQL Playground</p>
-        <p className="bootSub">
-          The SQLite WASM module could not be loaded. Check your connection and reload the page.
-        </p>
+        <p className="bootSub">{t.bootFailed}</p>
       </div>
     )
   }
@@ -142,9 +173,10 @@ export default function App() {
       <header className="header">
         <div className="brand">
           <span className="logo">SQL Playground</span>
-          <span className="brandSub">SQLite in your browser</span>
+          <span className="brandSub">{t.brandSub}</span>
         </div>
         <nav className="nav">
+          {langToggle}
           <a
             href="https://github.com/jelenProgramming/sql-playground"
             target="_blank"
@@ -164,7 +196,7 @@ export default function App() {
       </header>
 
       <div className="shell">
-        <SchemaSidebar schema={schema} dbName={DB_NAME} onPickTable={pickTable} />
+        <SchemaSidebar schema={schema} dbName={DB_NAME} onPickTable={pickTable} t={t} />
 
         <main className="main">
           <div className="tabs" role="tablist" aria-label="Mode">
@@ -175,7 +207,7 @@ export default function App() {
               className={tab === 'playground' ? 'tab tabActive' : 'tab'}
               onClick={() => setTab('playground')}
             >
-              Playground
+              {t.tabPlayground}
             </button>
             <button
               type="button"
@@ -184,7 +216,7 @@ export default function App() {
               className={tab === 'exercises' ? 'tab tabActive' : 'tab'}
               onClick={() => setTab('exercises')}
             >
-              Exercises ({passed.size}/{EXERCISES.length})
+              {t.tabExercises} ({passed.size}/{EXERCISES.length})
             </button>
           </div>
 
@@ -194,19 +226,20 @@ export default function App() {
                 value={sql}
                 onChange={setSql}
                 onRun={runPlayground}
-                label="Query"
+                label={t.queryLabel}
+                hintRuns={t.editorHintRuns}
                 textareaRef={editorRef}
               />
               <div className="actionRow">
                 <button type="button" className="btnPrimary" onClick={runPlayground}>
-                  Run query
+                  {t.runQuery}
                 </button>
                 <button type="button" className="btnGhost" onClick={resetDb}>
-                  Reset database
+                  {t.resetDb}
                 </button>
               </div>
               <div key={runCount} className="fadeUp">
-                <ResultsTable result={result} />
+                <ResultsTable result={result} t={t} />
               </div>
               <HistoryPanel
                 history={history}
@@ -214,19 +247,17 @@ export default function App() {
                   setSql(q)
                   editorRef.current?.focus()
                 }}
+                title={t.historyTitle}
               />
             </section>
           ) : (
-            <ExercisePanel makeDb={makeDb} passed={passed} onPass={onPass} />
+            <ExercisePanel makeDb={makeDb} passed={passed} onPass={onPass} lang={lang} t={t} />
           )}
         </main>
       </div>
 
       <footer className="footer">
-        <span>
-          Built by David Jelen. React, TypeScript, sql.js. The database runs entirely in your
-          browser, nothing is sent to a server.
-        </span>
+        <span>{t.footer}</span>
         <a href="https://github.com/jelenProgramming" target="_blank" rel="noopener noreferrer">
           GitHub
         </a>

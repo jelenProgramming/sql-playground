@@ -1,21 +1,23 @@
 import type { QueryResult } from '../db/database'
 import { displayCell, formatMs } from '../lib/format'
+import type { UIStrings } from '../i18n'
 
 const MAX_ROWS = 500
 
 interface Props {
   result: QueryResult | null
+  t: UIStrings
 }
 
-export default function ResultsTable({ result }: Props) {
+export default function ResultsTable({ result, t }: Props) {
   if (result === null) {
-    return <p className="placeholder">Run a query to see results here.</p>
+    return <p className="placeholder">{t.placeholderResult}</p>
   }
 
   if (result.kind === 'error') {
     return (
       <div className="errorBox" role="alert">
-        <span className="errorTag">SQL error</span>
+        <span className="errorTag">{t.sqlError}</span>
         <code>{result.message}</code>
       </div>
     )
@@ -24,7 +26,7 @@ export default function ResultsTable({ result }: Props) {
   if (result.kind === 'write') {
     return (
       <div className="writeBox" role="status">
-        OK. {result.rowsModified} row(s) modified in {formatMs(result.ms)}.
+        {t.writeOk(result.rowsModified, formatMs(result.ms))}
       </div>
     )
   }
@@ -36,15 +38,15 @@ export default function ResultsTable({ result }: Props) {
       <div className="metaRow">
         <div className="metaCell">
           <span className="metaValue">{result.values.length}</span>
-          <span className="metaLabel">rows</span>
+          <span className="metaLabel">{t.rows}</span>
         </div>
         <div className="metaCell">
           <span className="metaValue">{result.columns.length}</span>
-          <span className="metaLabel">columns</span>
+          <span className="metaLabel">{t.columns}</span>
         </div>
         <div className="metaCell">
           <span className="metaValue">{formatMs(result.ms)}</span>
-          <span className="metaLabel">execution</span>
+          <span className="metaLabel">{t.execution}</span>
         </div>
       </div>
       {result.columns.length > 0 && (
@@ -72,9 +74,7 @@ export default function ResultsTable({ result }: Props) {
         </div>
       )}
       {result.values.length > MAX_ROWS && (
-        <p className="truncNote">
-          Showing the first {MAX_ROWS} of {result.values.length} rows.
-        </p>
+        <p className="truncNote">{t.truncNote(MAX_ROWS, result.values.length)}</p>
       )}
     </div>
   )

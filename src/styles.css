@@ -143,6 +143,33 @@ pre,
   opacity: 0.88;
 }
 
+.langToggle {
+  display: flex;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px;
+  background: var(--surface);
+}
+
+.langToggle__btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.langToggle__btn--on {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.langToggle__btn:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
 .shell {
   flex: 1;
   display: grid;
