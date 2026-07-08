@@ -790,3 +790,22 @@ kbd {
     display: none;
   }
 }
+
+/* deep-teal jewel accent on editorial neutral */
+:root { --jewel: #0f766e; --jewel-soft: #d7ede9; }
+.bootTitle { color: var(--jewel); }
+.logo { color: var(--jewel); }
+.navCta { background: linear-gradient(135deg, #0f766e, #0b5e57); }
+.langToggle__btn--on { background: var(--jewel); color: #fff; }
+.tab:hover { color: var(--jewel); }
+.tabActive { border-bottom-color: var(--jewel); color: var(--text); }
+a { border-bottom-color: var(--jewel); }
+a:hover { border-bottom-color: var(--jewel); color: var(--jewel); }
+.tableToggle:hover .tableName { color: var(--jewel); }
+.editor:focus { border-color: var(--jewel); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12); }
+.btnPrimary { background: linear-gradient(135deg, #0f766e, #0b5e57); color: #fff; box-shadow: 0 8px 20px rgba(15, 118, 110, 0.24); }
+.btnPrimary:hover { opacity: 1; filter: brightness(1.07); }
+.metaValue { color: var(--jewel); }
+.results tbody tr:hover td { background: var(--jewel-soft); }
+.checkPass { border-color: var(--jewel); color: var(--jewel); }
+.exDone { color: var(--jewel); }
