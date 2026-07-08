@@ -39,6 +39,6 @@ describe('truncate', () => {
     const long = 'x'.repeat(200)
     const out = truncate(long, 50)
     expect(out.length).toBe(50)
-    expect(out.endsWith('…')).toBe(true)
+    expect(out.endsWith('...')).toBe(true)
   })
 })

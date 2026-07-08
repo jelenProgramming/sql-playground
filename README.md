@@ -43,5 +43,5 @@ npm run build   # type-check + production build
 
 ## Author
 
-David Jelen · [GitHub](https://github.com/jelenProgramming) ·
+David Jelen | [GitHub](https://github.com/jelenProgramming) |
 [Portfolio](https://portfolio-green-zeta-25.vercel.app)

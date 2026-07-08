@@ -18,5 +18,5 @@ export function displayCell(value: SqlValue): string {
 export function truncate(text: string, max: number): string {
   const collapsed = text.replace(/\s+/g, ' ').trim()
   if (collapsed.length <= max) return collapsed
-  return `${collapsed.slice(0, max - 1)}…`
+  return `${collapsed.slice(0, max - 1)}...`
 }

@@ -67,7 +67,7 @@ export const UI: Record<Lang, UIStrings> = {
     hideSolution: 'Hide solution',
     solved: '✓ solved',
     correct: 'Correct. Your result matches the expected output.',
-    bootLoading: 'Loading SQLite (WebAssembly)…',
+    bootLoading: 'Loading SQLite (WebAssembly)...',
     bootFailed: 'The SQLite WASM module could not be loaded. Check your connection and reload the page.',
     footer:
       'Built by David Jelen. React, TypeScript, sql.js. The database runs entirely in your browser, nothing is sent to a server.',
@@ -102,7 +102,7 @@ export const UI: Record<Lang, UIStrings> = {
     hideSolution: 'Lösung verbergen',
     solved: '✓ gelöst',
     correct: 'Richtig. Dein Ergebnis entspricht der erwarteten Ausgabe.',
-    bootLoading: 'SQLite (WebAssembly) wird geladen…',
+    bootLoading: 'SQLite (WebAssembly) wird geladen...',
     bootFailed:
       'Das SQLite-WASM-Modul konnte nicht geladen werden. Prüfe deine Verbindung und lade die Seite neu.',
     footer:

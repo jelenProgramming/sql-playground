@@ -184,7 +184,7 @@ HAVING COUNT(*) > 2;`,
     title: { en: 'Average basket per country', de: 'Durchschnittlicher Warenkorb je Land' },
     difficulty: 3,
     prompt: {
-      en: 'For each country, compute the average order value (sum of an order’s line items) across all orders placed by customers from that country, rounded to 2 decimals. Return country and the average, any row order.',
+      en: 'For each country, compute the average order value (sum of the line items in an order) across all orders placed by customers from that country, rounded to 2 decimals. Return country and the average, any row order.',
       de: 'Berechne je Land den durchschnittlichen Bestellwert (Summe der Positionen einer Bestellung) über alle Bestellungen von Kunden aus diesem Land, auf 2 Dezimalstellen gerundet. Land und Durchschnitt, Reihenfolge egal.',
     },
     hint: {
@@ -207,7 +207,7 @@ GROUP BY c.country;`,
     title: { en: 'Running revenue', de: 'Laufender Umsatz' },
     difficulty: 3,
     prompt: {
-      en: 'Excluding cancelled orders, show revenue per order date and a running total over time: date, that day’s revenue, cumulative revenue. Chronological order.',
+      en: 'Excluding cancelled orders, show revenue per order date and a running total over time: date, the revenue on that day, cumulative revenue. Chronological order.',
       de: 'Ohne stornierte Bestellungen: Umsatz je Bestelldatum und laufende Summe über die Zeit: Datum, Tagesumsatz, kumulierter Umsatz. Chronologisch.',
     },
     hint: {
